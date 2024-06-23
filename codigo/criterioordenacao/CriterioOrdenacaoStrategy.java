@@ -1,5 +1,7 @@
 package criterioordenacao;
+import produto.Produto;
 
 public interface CriterioOrdenacaoStrategy {
-    public void ordena();
+    public boolean compare(Produto x, Produto y);
+
 }

@@ -1,12 +1,20 @@
+import criterioordenacao.CriterioDescricaoCrescente;
+import criterioordenacao.CriterioEstoqueCrescente;
+import criterioordenacao.CriterioOrdenacaoStrategy;
+import criterioordenacao.CriterioPrecoCrescente;
+import produto.Produto;
+import produto.ProdutoPadrao;
+import sort.InsertionSort;
+import sort.QuickSort;
+import sort.SortStrategy;
+
 import java.io.PrintWriter;
 import java.io.IOException;
 
-import java.util.*;
-
 public class GeradorDeRelatorios {
 
-	public static final String ALG_INSERTIONSORT = "quick";
-	public static final String ALG_QUICKSORT = "insertion";
+	public static final String ALG_INSERTIONSORT = "insertion";
+	public static final String ALG_QUICKSORT = "quick";
 
 	public static final String CRIT_DESC_CRESC = "descricao_c";
 	public static final String CRIT_PRECO_CRESC = "preco_c";
@@ -22,12 +30,17 @@ public class GeradorDeRelatorios {
 	public static final int FORMATO_NEGRITO = 0b0001;
 	public static final int FORMATO_ITALICO = 0b0010;
 
-	private Produto [] produtos;
+	private Produto[] produtos;
 	private String algoritmo;
 	private String criterio;
 	private String filtro;
 	private String argFiltro;
-	private int format_flags;	
+	private int format_flags;
+
+
+	private SortStrategy sortStrategy;
+	private CriterioOrdenacaoStrategy criterioOrdenacaoStrategy;
+
 
 	public GeradorDeRelatorios(Produto [] produtos, String algoritmo, String criterio, String filtro, String argFiltro, int format_flags){
 
@@ -43,126 +56,34 @@ public class GeradorDeRelatorios {
 		this.format_flags = format_flags;
 		this.filtro = filtro;
 		this.argFiltro = argFiltro;
-	}
 
-	private int particiona(int ini, int fim){
-
-		Produto x = produtos[ini];
-		int i = (ini - 1);
-		int j = (fim + 1);
-
-		while(true){
-
-			if(criterio.equals(CRIT_DESC_CRESC)){
-
-				do{ 
-					j--;
-
-				} while(produtos[j].getDescricao().compareToIgnoreCase(x.getDescricao()) > 0);
-			
-				do{
-					i++;
-
-				} while(produtos[i].getDescricao().compareToIgnoreCase(x.getDescricao()) < 0);
-			}
-			else if(criterio.equals(CRIT_PRECO_CRESC)){
-
-				do{ 
-					j--;
-
-				} while(produtos[j].getPreco() > x.getPreco());
-			
-				do{
-					i++;
-
-				} while(produtos[i].getPreco() < x.getPreco());
-			}
-
-			else if(criterio.equals(CRIT_ESTOQUE_CRESC)){
-
-				do{ 
-					j--;
-
-				} while(produtos[j].getQtdEstoque() > x.getQtdEstoque());
-			
-				do{
-					i++;
-
-				} while(produtos[i].getQtdEstoque() < x.getQtdEstoque());
-
-			}
-			else{
-
-				throw new RuntimeException("Criterio invalido!");
-			}
-
-			if(i < j){
-				Produto temp = produtos[i];
-				produtos[i] = produtos[j]; 				
-				produtos[j] = temp;
-			}
-			else return j;
+		if(criterio.equals(CRIT_DESC_CRESC)){
+			this.criterioOrdenacaoStrategy = new CriterioDescricaoCrescente();
 		}
-	}
+		else if(criterio.equals(CRIT_PRECO_CRESC)){
+			this.criterioOrdenacaoStrategy = new CriterioPrecoCrescente();
+		}
 
-	private void ordena(int ini, int fim){
+		else if(criterio.equals(CRIT_ESTOQUE_CRESC)){
+			this.criterioOrdenacaoStrategy = new CriterioEstoqueCrescente();
+		}
+		else{
+
+			throw new RuntimeException("Criterio invalido!");
+		}
+
 
 		if(algoritmo.equals(ALG_INSERTIONSORT)){
-
-			for(int i = ini; i <= fim; i++){
-
-				Produto x = produtos[i];				
-				int j = (i - 1);
-
-				while(j >= ini){
-
-					if(criterio.equals(CRIT_DESC_CRESC)){
-
-						if( x.getDescricao().compareToIgnoreCase(produtos[j].getDescricao()) < 0 ){
-			
-							produtos[j + 1] = produtos[j];
-							j--;
-						}
-						else break;
-					}
-					else if(criterio.equals(CRIT_PRECO_CRESC)){
-
-						if(x.getPreco() < produtos[j].getPreco()){
-			
-							produtos[j + 1] = produtos[j];
-							j--;
-						}
-						else break;
-					}
-					else if(criterio.equals(CRIT_ESTOQUE_CRESC)){
-
-						if(x.getQtdEstoque() < produtos[j].getQtdEstoque()){
-			
-							produtos[j + 1] = produtos[j];
-							j--;
-						}
-						else break;
-					}
-					else throw new RuntimeException("Criterio invalido!");
-				}
-
-				produtos[j + 1] = x;
-			}
+			this.sortStrategy = new InsertionSort(this.produtos, this.criterioOrdenacaoStrategy);
 		}
 		else if(algoritmo.equals(ALG_QUICKSORT)){
-
-			if(ini < fim) {
-
-				int q = particiona(ini, fim);
-				
-				ordena(ini, q);
-				ordena(q + 1, fim);
-			}
+			this.sortStrategy = new QuickSort(this.produtos, this.criterioOrdenacaoStrategy);
 		}
 		else {
 			throw new RuntimeException("Algoritmo invalido!");
 		}
 	}
+
 	
 	
 	public void debug(){
@@ -176,7 +97,7 @@ public class GeradorDeRelatorios {
 
 		debug();
 
-		ordena(0, produtos.length - 1);
+		this.sortStrategy.sort(0, produtos.length - 1);
 
 		PrintWriter out = new PrintWriter(arquivoSaida);
 

@@ -1,9 +1,12 @@
 package criterioordenacao;
+import produto.Produto;
 
 public class CriterioPrecoCrescente implements CriterioOrdenacaoStrategy{
 
     @Override
-    public void ordena() {
-
+    public boolean compare(Produto x, Produto y) {
+        return (x.getPreco() < y.getPreco());
     }
+
+
 }
