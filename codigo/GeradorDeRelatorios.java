@@ -2,6 +2,10 @@ import criterioordenacao.CriterioDescricaoCrescente;
 import criterioordenacao.CriterioEstoqueCrescente;
 import criterioordenacao.CriterioOrdenacaoStrategy;
 import criterioordenacao.CriterioPrecoCrescente;
+import filter.FilterStrategy;
+import filter.FiltrarCategoria;
+import filter.FiltrarEstoque;
+import filter.FiltrarTodos;
 import produto.Produto;
 import produto.ProdutoPadrao;
 import sort.InsertionSort;
@@ -40,6 +44,7 @@ public class GeradorDeRelatorios {
 
 	private SortStrategy sortStrategy;
 	private CriterioOrdenacaoStrategy criterioOrdenacaoStrategy;
+	private FilterStrategy filterStrategy;
 
 
 	public GeradorDeRelatorios(Produto [] produtos, String algoritmo, String criterio, String filtro, String argFiltro, int format_flags){
@@ -82,6 +87,19 @@ public class GeradorDeRelatorios {
 		else {
 			throw new RuntimeException("Algoritmo invalido!");
 		}
+
+		if(filtro.equals(FILTRO_TODOS)){
+			this.filterStrategy = new FiltrarTodos();
+		}
+		else if(filtro.equals(FILTRO_ESTOQUE_MENOR_OU_IQUAL_A)){
+			this.filterStrategy = new FiltrarEstoque();
+		}
+		else if(filtro.equals(FILTRO_CATEGORIA_IGUAL_A)){
+			this.filterStrategy = new FiltrarCategoria();
+		}
+		else{
+			throw new RuntimeException("Filtro invalido!");
+		}
 	}
 
 	
@@ -114,21 +132,10 @@ public class GeradorDeRelatorios {
 			Produto p = produtos[i];
 			boolean selecionado = false;
 
-			if(filtro.equals(FILTRO_TODOS)){
-
+			if(filterStrategy.filter(p, this.argFiltro)){
 				selecionado = true;
 			}
-			else if(filtro.equals(FILTRO_ESTOQUE_MENOR_OU_IQUAL_A)){
 
-				if(p.getQtdEstoque() <= Integer.parseInt(argFiltro)) selecionado = true;	
-			}
-			else if(filtro.equals(FILTRO_CATEGORIA_IGUAL_A)){
-
-				if(p.getCategoria().equalsIgnoreCase(argFiltro)) selecionado = true;
-			}
-			else{
-				throw new RuntimeException("Filtro invalido!");			
-			}
 
 			if(selecionado){
 

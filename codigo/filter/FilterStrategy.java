@@ -1,5 +1,6 @@
 package filter;
+import produto.Produto;
 
 public interface FilterStrategy {
-    public void filter();
+    public boolean filter(Produto p, String argFiltro);
 }
