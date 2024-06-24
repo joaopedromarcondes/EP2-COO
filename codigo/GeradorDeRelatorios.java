@@ -6,6 +6,9 @@ import filter.FilterStrategy;
 import filter.FiltrarCategoria;
 import filter.FiltrarEstoque;
 import filter.FiltrarTodos;
+import formatacoes.Formatacao;
+import formatacoes.FormatacaoItalico;
+import formatacoes.FormatacaoNegrito;
 import produto.Produto;
 import produto.ProdutoPadrao;
 import sort.InsertionSort;
@@ -45,6 +48,7 @@ public class GeradorDeRelatorios {
 	private SortStrategy sortStrategy;
 	private CriterioOrdenacaoStrategy criterioOrdenacaoStrategy;
 	private FilterStrategy filterStrategy;
+	private Formatacao formatacao;
 
 
 	public GeradorDeRelatorios(Produto [] produtos, String algoritmo, String criterio, String filtro, String argFiltro, int format_flags){
@@ -100,6 +104,16 @@ public class GeradorDeRelatorios {
 		else{
 			throw new RuntimeException("Filtro invalido!");
 		}
+
+		this.formatacao = new Formatacao();
+		if((format_flags & FORMATO_ITALICO) > 0){
+			this.formatacao = new FormatacaoItalico(this.formatacao);
+		}
+
+		if((format_flags & FORMATO_NEGRITO) > 0){
+			this.formatacao = new FormatacaoNegrito(this.formatacao);
+		}
+
 	}
 
 	
@@ -136,32 +150,10 @@ public class GeradorDeRelatorios {
 				selecionado = true;
 			}
 
-
 			if(selecionado){
-
 				out.print("<li>");
 
-				if((format_flags & FORMATO_ITALICO) > 0){
-
-					out.print("<span style=\"font-style:italic\">");
-				}
-
-				if((format_flags & FORMATO_NEGRITO) > 0){
-
-					out.print("<span style=\"font-weight:bold\">");
-				} 
-			
-				out.print(p.formataParaImpressao());
-
-				if((format_flags & FORMATO_NEGRITO) > 0){
-
-					out.print("</span>");
-				} 
-
-				if((format_flags & FORMATO_ITALICO) > 0){
-
-					out.print("</span>");
-				}
+				out.print(this.formatacao.getFormatacao(p));
 
 				out.println("</li>");
 				count++;

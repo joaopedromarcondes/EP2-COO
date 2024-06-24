@@ -1,12 +1,16 @@
 package formatacoes;
 
-public abstract class FormatacoesDecorator {
-    private FormatacoesDecorator f;
+import produto.Produto;
 
-    public void setF(FormatacoesDecorator f) {
+public abstract class FormatacoesDecorator extends Formatacao {
+    protected Formatacao f;
+
+    public FormatacoesDecorator(Formatacao f) {
         this.f = f;
     }
 
-    public abstract void formatar();
+    public void setF(Formatacao f) {
+        this.f = f;
+    }
 
 }
