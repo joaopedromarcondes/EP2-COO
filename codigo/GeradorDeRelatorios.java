@@ -6,9 +6,8 @@ import filter.FilterStrategy;
 import filter.FiltrarCategoria;
 import filter.FiltrarEstoque;
 import filter.FiltrarTodos;
-import formatacoes.Formatacao;
-import formatacoes.FormatacaoItalico;
-import formatacoes.FormatacaoNegrito;
+import produto.formatacoes.FormatacaoItalico;
+import produto.formatacoes.FormatacaoNegrito;
 import produto.Produto;
 import produto.ProdutoPadrao;
 import sort.InsertionSort;
@@ -48,7 +47,6 @@ public class GeradorDeRelatorios {
 	private SortStrategy sortStrategy;
 	private CriterioOrdenacaoStrategy criterioOrdenacaoStrategy;
 	private FilterStrategy filterStrategy;
-	private Formatacao formatacao;
 
 
 	public GeradorDeRelatorios(Produto [] produtos, String algoritmo, String criterio, String filtro, String argFiltro, int format_flags){
@@ -105,15 +103,6 @@ public class GeradorDeRelatorios {
 			throw new RuntimeException("Filtro invalido!");
 		}
 
-		this.formatacao = new Formatacao();
-		if((format_flags & FORMATO_ITALICO) > 0){
-			this.formatacao = new FormatacaoItalico(this.formatacao);
-		}
-
-		if((format_flags & FORMATO_NEGRITO) > 0){
-			this.formatacao = new FormatacaoNegrito(this.formatacao);
-		}
-
 	}
 
 	
@@ -153,7 +142,15 @@ public class GeradorDeRelatorios {
 			if(selecionado){
 				out.print("<li>");
 
-				out.print(this.formatacao.getFormatacao(p));
+				if((format_flags & FORMATO_ITALICO) > 0){
+					p = new FormatacaoItalico(p);
+				}
+
+				if((format_flags & FORMATO_NEGRITO) > 0){
+					p = new FormatacaoNegrito(p);
+				}
+
+				out.print(p.formataParaImpressao());
 
 				out.println("</li>");
 				count++;
