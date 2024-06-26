@@ -2,9 +2,11 @@ package sort;
 import criterioordenacao.CriterioOrdenacaoStrategy;
 import produto.Produto;
 
+import java.util.List;
+
 public class QuickSort extends SortStrategy{
 
-    public QuickSort(Produto[] produtos, CriterioOrdenacaoStrategy criterioOrdenacaoStrategy) {
+    public QuickSort(List<Produto> produtos, CriterioOrdenacaoStrategy criterioOrdenacaoStrategy) {
         super(produtos, criterioOrdenacaoStrategy);
     }
 
@@ -20,7 +22,7 @@ public class QuickSort extends SortStrategy{
 
     private int particiona(int ini, int fim){
 
-        Produto x = this.produtos[ini];
+        Produto x = this.produtos.get(ini);
         int i = (ini - 1);
         int j = (fim + 1);
 
@@ -29,12 +31,12 @@ public class QuickSort extends SortStrategy{
             do{
                 j--;
 
-            } while(this.criterioOrdenacaoStrategy.compare(x, this.produtos[j]));
+            } while(this.criterioOrdenacaoStrategy.compare(x, this.produtos.get(j)));
 
             do{
                 i++;
 
-            } while(this.criterioOrdenacaoStrategy.compare(this.produtos[i], x));
+            } while(this.criterioOrdenacaoStrategy.compare(this.produtos.get(i), x));
 
 
 
@@ -46,9 +48,9 @@ public class QuickSort extends SortStrategy{
     }
 
     private void swapProdutos(int i, int j) {
-        Produto temp = this.produtos[i];
-        this.produtos[i] = this.produtos[j];
-        this.produtos[j] = temp;
+        Produto temp = this.produtos.get(i);
+        this.produtos.set(i, this.produtos.get(j));
+        this.produtos.set(j, temp);
     }
 
 

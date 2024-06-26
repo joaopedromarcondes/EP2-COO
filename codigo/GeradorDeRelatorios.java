@@ -16,6 +16,8 @@ import sort.SortStrategy;
 
 import java.io.PrintWriter;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 
 public class GeradorDeRelatorios {
 
@@ -36,7 +38,7 @@ public class GeradorDeRelatorios {
 	public static final int FORMATO_NEGRITO = 0b0001;
 	public static final int FORMATO_ITALICO = 0b0010;
 
-	private Produto[] produtos;
+	private List<Produto> produtos;
 	private String algoritmo;
 	private String criterio;
 	private String filtro;
@@ -51,12 +53,7 @@ public class GeradorDeRelatorios {
 
 	public GeradorDeRelatorios(Produto [] produtos, String algoritmo, String criterio, String filtro, String argFiltro, int format_flags){
 
-		this.produtos = new Produto[produtos.length];
-		
-		for(int i = 0; i < produtos.length; i++){
-		
-			this.produtos[i] = produtos[i];
-		}
+		this.produtos = new ArrayList<>(List.of(produtos));
 
 		this.algoritmo = algoritmo;
 		this.criterio = criterio;
@@ -109,7 +106,7 @@ public class GeradorDeRelatorios {
 	
 	public void debug(){
 
-		System.out.println("Gerando relatório para array contendo " + produtos.length + " produto(s)");
+		System.out.println("Gerando relatório para array contendo " + produtos.size() + " produto(s)");
 		System.out.println("parametro filtro = '" + argFiltro + "'"); 
 	}
 
@@ -118,7 +115,7 @@ public class GeradorDeRelatorios {
 
 		debug();
 
-		this.sortStrategy.sort(0, produtos.length - 1);
+		this.sortStrategy.sort(0, this.produtos.size() - 1);
 
 		PrintWriter out = new PrintWriter(arquivoSaida);
 
@@ -130,9 +127,9 @@ public class GeradorDeRelatorios {
 
 		int count = 0;
 
-		for(int i = 0; i < produtos.length; i++){
+		for(int i = 0; i < produtos.size(); i++){
 
-			Produto p = produtos[i];
+			Produto p = produtos.get(i);
 			boolean selecionado = false;
 
 			if(filterStrategy.filter(p, this.argFiltro)){
@@ -158,7 +155,7 @@ public class GeradorDeRelatorios {
 		}
 
 		out.println("</ul>");
-		out.println(count + " produtos listados, de um total de " + produtos.length + ".");
+		out.println(count + " produtos listados, de um total de " + produtos.size() + ".");
 		out.println("</body>");
 		out.println("</html>");
 

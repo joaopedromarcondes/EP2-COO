@@ -2,12 +2,14 @@ package sort;
 import criterioordenacao.CriterioOrdenacaoStrategy;
 import produto.Produto;
 
+import java.util.List;
+
 public abstract class SortStrategy {
 
 
-    protected Produto[] produtos;
+    protected List<Produto> produtos;
     protected CriterioOrdenacaoStrategy criterioOrdenacaoStrategy;
-    public SortStrategy(Produto[] produtos, CriterioOrdenacaoStrategy criterioOrdenacaoStrategy) {
+    public SortStrategy(List<Produto> produtos, CriterioOrdenacaoStrategy criterioOrdenacaoStrategy) {
         this.produtos = produtos;
         this.criterioOrdenacaoStrategy = criterioOrdenacaoStrategy;
     }
