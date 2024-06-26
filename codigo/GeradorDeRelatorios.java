@@ -1,18 +1,8 @@
-import criterioordenacao.CriterioDescricaoCrescente;
-import criterioordenacao.CriterioEstoqueCrescente;
-import criterioordenacao.CriterioOrdenacaoStrategy;
-import criterioordenacao.CriterioPrecoCrescente;
-import filter.FilterStrategy;
-import filter.FiltrarCategoria;
-import filter.FiltrarEstoque;
-import filter.FiltrarTodos;
-import produto.formatacoes.FormatacaoItalico;
-import produto.formatacoes.FormatacaoNegrito;
-import produto.Produto;
-import produto.ProdutoPadrao;
-import sort.InsertionSort;
-import sort.QuickSort;
-import sort.SortStrategy;
+import criterioordenacao.*;
+import filter.*;
+import produto.formatacoes.*;
+import produto.*;
+import sort.*;
 
 import java.io.PrintWriter;
 import java.io.IOException;

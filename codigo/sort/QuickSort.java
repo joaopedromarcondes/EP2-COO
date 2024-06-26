@@ -2,6 +2,7 @@ package sort;
 import criterioordenacao.CriterioOrdenacaoStrategy;
 import produto.Produto;
 
+import java.util.Collections;
 import java.util.List;
 
 public class QuickSort extends SortStrategy{
@@ -39,19 +40,11 @@ public class QuickSort extends SortStrategy{
             } while(this.criterioOrdenacaoStrategy.compare(this.produtos.get(i), x));
 
 
-
             if(i < j){
-                this.swapProdutos(i, j);
+                Collections.swap(this.produtos, i, j);
             }
             else return j;
         }
     }
-
-    private void swapProdutos(int i, int j) {
-        Produto temp = this.produtos.get(i);
-        this.produtos.set(i, this.produtos.get(j));
-        this.produtos.set(j, temp);
-    }
-
 
 }

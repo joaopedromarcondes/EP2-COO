@@ -1,7 +1,6 @@
 package sort;
 import criterioordenacao.CriterioOrdenacaoStrategy;
 import produto.Produto;
-
 import java.util.List;
 
 public class InsertionSort extends SortStrategy {
@@ -18,8 +17,7 @@ public class InsertionSort extends SortStrategy {
 
             while(j >= ini){
                 if (this.criterioOrdenacaoStrategy.compare(x, this.produtos.get(j))){
-                    Produto temp = this.produtos.get(j);
-                    this.produtos.set(j+1, temp);
+                    this.produtos.set(j+1, this.produtos.get(j));
                     j--;
                 }
                 else break;
