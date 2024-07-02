@@ -6,8 +6,11 @@ import sort.*;
 
 import java.io.PrintWriter;
 import java.io.IOException;
+import java.io.BufferedReader;
+import java.io.FileReader;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Scanner;
 
 public class GeradorDeRelatorios {
 
@@ -44,9 +47,9 @@ public class GeradorDeRelatorios {
 	private FilterStrategy filterStrategy;
 
 
-	public GeradorDeRelatorios(Produto [] produtos, String algoritmo, String criterio, String filtro, String argFiltro, int format_flags){
+	public GeradorDeRelatorios(List<Produto> produtos, String algoritmo, String criterio, String filtro, String argFiltro, int format_flags){
 
-		this.produtos = new ArrayList<>(List.of(produtos));
+		this.produtos = produtos;
 
 		this.algoritmo = algoritmo;
 		this.criterio = criterio;
@@ -163,7 +166,7 @@ public class GeradorDeRelatorios {
 		out.close();
 	}
 
-	public static Produto [] carregaProdutos(){
+	public static List<Produto> carregaProdutos(){
 		List<Produto> produtos = new ArrayList<>();
 		Scanner entrada = null;
 		Produto p;
@@ -177,7 +180,7 @@ public class GeradorDeRelatorios {
 		String cor;
 
 		try {
-			entrada = new Scanner(new BufferedReader(new FileReader("codigo/produtos.csv")));
+			entrada = new Scanner(new BufferedReader(new FileReader("produtos.csv")));
 			entrada.nextLine();
 			entrada.useDelimiter(", |\n");
 			while (entrada.hasNext()) {

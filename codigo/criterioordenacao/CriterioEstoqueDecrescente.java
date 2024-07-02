@@ -1,7 +1,7 @@
 package criterioordenacao;
 import produto.Produto;
 
-public class CriterioEstoqueCrescente implements CriterioOrdenacaoStrategy{
+public class CriterioEstoqueDecrescente implements CriterioOrdenacaoStrategy{
 
     @Override
     public boolean compare(Produto x, Produto y) {
