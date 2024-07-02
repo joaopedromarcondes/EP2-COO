@@ -17,7 +17,10 @@ public class GeradorDeRelatorios {
 	public static final String CRIT_DESC_CRESC = "descricao_c";
 	public static final String CRIT_PRECO_CRESC = "preco_c";
 	public static final String CRIT_ESTOQUE_CRESC = "estoque_c";
-	
+	public static final String CRIT_DESC_DECRESC = "descricao_d";
+	public static final String CRIT_PRECO_DECRESC = "preco_d";
+	public static final String CRIT_ESTOQUE_DECRESC = "estoque_d";
+
 	public static final String FILTRO_TODOS = "todos";
 	public static final String FILTRO_ESTOQUE_MENOR_OU_IQUAL_A = "estoque_menor_igual";
 	public static final String FILTRO_CATEGORIA_IGUAL_A = "categoria_igual";
@@ -57,9 +60,17 @@ public class GeradorDeRelatorios {
 		else if(criterio.equals(CRIT_PRECO_CRESC)){
 			this.criterioOrdenacaoStrategy = new CriterioPrecoCrescente();
 		}
-
 		else if(criterio.equals(CRIT_ESTOQUE_CRESC)){
 			this.criterioOrdenacaoStrategy = new CriterioEstoqueCrescente();
+		}
+		else if(criterio.equals(CRIT_ESTOQUE_DECRESC)){
+			this.criterioOrdenacaoStrategy = new CriterioEstoqueDecrescente();
+		}
+		else if(criterio.equals(CRIT_PRECO_DECRESC)){
+			this.criterioOrdenacaoStrategy = new CriterioPrecoDecrescente();
+		}
+		else if(criterio.equals(CRIT_DESC_DECRESC)){
+			this.criterioOrdenacaoStrategy = new CriterioDescricaoDecrescente();
 		}
 		else{
 
