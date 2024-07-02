@@ -28,6 +28,7 @@ public class GeradorDeRelatorios {
 	public static final String FILTRO_ESTOQUE_MENOR_OU_IQUAL_A = "estoque_menor_igual";
 	public static final String FILTRO_CATEGORIA_IGUAL_A = "categoria_igual";
 	public static final String FILTRO_PRECO_ENTRE = "preco_entre";
+	public static final String FILTRO_DESCRICAO_SUBSTRING = "descricao_substring";
 
 	// operador bit a bit "ou" pode ser usado para combinar mais de  
 	// um estilo de formatacao simultaneamente (veja como no main)
@@ -103,6 +104,9 @@ public class GeradorDeRelatorios {
 		}
 		else if(filtro.equals(FILTRO_PRECO_ENTRE)){
 			this.filterStrategy = new FiltrarPreco();
+		}
+		else if(filtro.equals(FILTRO_DESCRICAO_SUBSTRING)){
+			this.filterStrategy = new FiltrarDescricao();
 		}
 		else{
 			throw new RuntimeException("Filtro invalido!");
@@ -218,7 +222,7 @@ public class GeradorDeRelatorios {
 			System.out.println("Onde:");
 			System.out.println("\talgoritmo: 'quick' ou 'insertion'");
 			System.out.println("\tcriterio de ordenação: 'preco_c' ou 'descricao_c' ou 'estoque_c' ou 'preco_d' ou 'descricao_d' ou 'estoque_d'");
-			System.out.println("\tcriterio de filtragem: 'todos' ou 'estoque_menor_igual' ou 'categoria_igual' ou 'preco_entre'"); 
+			System.out.println("\tcriterio de filtragem: 'todos' ou 'estoque_menor_igual' ou 'categoria_igual' ou 'preco_entre' ou 'descricao_substring'"); 
 			System.out.println("\tparâmetro de filtragem: argumentos adicionais necessários para a filtragem"); 
 			System.out.println("\topções de formatação: 'negrito' e/ou 'italico'");
 			System.out.println();
