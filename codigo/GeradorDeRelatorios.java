@@ -27,6 +27,7 @@ public class GeradorDeRelatorios {
 	public static final String FILTRO_TODOS = "todos";
 	public static final String FILTRO_ESTOQUE_MENOR_OU_IQUAL_A = "estoque_menor_igual";
 	public static final String FILTRO_CATEGORIA_IGUAL_A = "categoria_igual";
+	public static final String FILTRO_PRECO_ENTRE = "preco_entre";
 
 	// operador bit a bit "ou" pode ser usado para combinar mais de  
 	// um estilo de formatacao simultaneamente (veja como no main)
@@ -99,6 +100,9 @@ public class GeradorDeRelatorios {
 		}
 		else if(filtro.equals(FILTRO_CATEGORIA_IGUAL_A)){
 			this.filterStrategy = new FiltrarCategoria();
+		}
+		else if(filtro.equals(FILTRO_PRECO_ENTRE)){
+			this.filterStrategy = new FiltrarPreco();
 		}
 		else{
 			throw new RuntimeException("Filtro invalido!");
@@ -214,7 +218,7 @@ public class GeradorDeRelatorios {
 			System.out.println("Onde:");
 			System.out.println("\talgoritmo: 'quick' ou 'insertion'");
 			System.out.println("\tcriterio de ordenação: 'preco_c' ou 'descricao_c' ou 'estoque_c' ou 'preco_d' ou 'descricao_d' ou 'estoque_d'");
-			System.out.println("\tcriterio de filtragem: 'todos' ou 'estoque_menor_igual' ou 'categoria_igual'"); 
+			System.out.println("\tcriterio de filtragem: 'todos' ou 'estoque_menor_igual' ou 'categoria_igual' ou 'preco_entre'"); 
 			System.out.println("\tparâmetro de filtragem: argumentos adicionais necessários para a filtragem"); 
 			System.out.println("\topções de formatação: 'negrito' e/ou 'italico'");
 			System.out.println();
@@ -224,11 +228,19 @@ public class GeradorDeRelatorios {
 		String opcao_algoritmo = args[0];
 		String opcao_criterio_ord = args[1];
 		String opcao_criterio_filtro = args[2];
-		String opcao_parametro_filtro = args[3];
+		String[] opcoes_formatacao = new String[2];
+		String opcao_parametro_filtro = null;
+		if (opcao_criterio_filtro.equals(FILTRO_PRECO_ENTRE)) {
+			opcao_parametro_filtro = args[3] + " " + args[4];
 		
-		String [] opcoes_formatacao = new String[2];
-		opcoes_formatacao[0] = args.length > 4 ? args[4] : null;
-		opcoes_formatacao[1] = args.length > 5 ? args[5] : null;
+			opcoes_formatacao[0] = args.length > 5 ? args[5] : null;
+			opcoes_formatacao[1] = args.length > 6 ? args[6] : null;	
+		} else {
+			opcao_parametro_filtro = args[3];
+			opcoes_formatacao[0] = args.length > 4 ? args[4] : null;
+			opcoes_formatacao[1] = args.length > 5 ? args[5] : null;
+		}
+		
 		int formato = FORMATO_PADRAO;
 		
 		for(int i = 0; i < opcoes_formatacao.length; i++) {
