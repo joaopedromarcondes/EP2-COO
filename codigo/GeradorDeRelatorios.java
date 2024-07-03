@@ -46,57 +46,72 @@ public class GeradorDeRelatorios {
 
 		CriterioOrdenacaoStrategy criterioOrdenacaoStrategy = null;
 
-		if(criterio.equals(CRIT_DESC_CRESC)){
-			criterioOrdenacaoStrategy = new CriterioDescricaoCrescente();
-		}
-		else if(criterio.equals(CRIT_PRECO_CRESC)){
-			criterioOrdenacaoStrategy = new CriterioPrecoCrescente();
-		}
-		else if(criterio.equals(CRIT_ESTOQUE_CRESC)){
-			criterioOrdenacaoStrategy = new CriterioEstoqueCrescente();
-		}
-		else if(criterio.equals(CRIT_ESTOQUE_DECRESC)){
-			criterioOrdenacaoStrategy = new CriterioEstoqueDecrescente();
-		}
-		else if(criterio.equals(CRIT_PRECO_DECRESC)){
-			criterioOrdenacaoStrategy = new CriterioPrecoDecrescente();
-		}
-		else if(criterio.equals(CRIT_DESC_DECRESC)){
-			criterioOrdenacaoStrategy = new CriterioDescricaoDecrescente();
-		}
-		else{
+		switch (criterio) {
+			case CRIT_DESC_CRESC:
+				criterioOrdenacaoStrategy = new CriterioDescricaoCrescente();
+				break;
+			
+			case CRIT_DESC_DECRESC:
+				criterioOrdenacaoStrategy = new CriterioDescricaoDecrescente();
+				break;
 
-			throw new RuntimeException("Criterio invalido!");
+			case CRIT_ESTOQUE_CRESC:
+				criterioOrdenacaoStrategy = new CriterioEstoqueCrescente();
+				break;
+
+			case CRIT_ESTOQUE_DECRESC:
+				criterioOrdenacaoStrategy = new CriterioEstoqueDecrescente();
+				break;
+
+			case CRIT_PRECO_CRESC:
+				criterioOrdenacaoStrategy = new CriterioPrecoCrescente();
+				break;
+
+			case CRIT_PRECO_DECRESC:
+				criterioOrdenacaoStrategy = new CriterioPrecoDecrescente();
+				break;
+			
+			default:
+				throw new RuntimeException("Criterio invalido!");
+		}
+		
+		switch (algoritmo) {
+			case ALG_INSERTIONSORT:
+				this.sortStrategy = new InsertionSort(this.produtos, criterioOrdenacaoStrategy);
+				break;
+			
+			case ALG_QUICKSORT:
+				this.sortStrategy = new QuickSort(this.produtos, criterioOrdenacaoStrategy);
+				break;
+		
+			default:
+				throw new RuntimeException("Algoritmo invalido!");
 		}
 
 
-		if(algoritmo.equals(ALG_INSERTIONSORT)){
-			this.sortStrategy = new InsertionSort(this.produtos, criterioOrdenacaoStrategy);
-		}
-		else if(algoritmo.equals(ALG_QUICKSORT)){
-			this.sortStrategy = new QuickSort(this.produtos, criterioOrdenacaoStrategy);
-		}
-		else {
-			throw new RuntimeException("Algoritmo invalido!");
-		}
-
-		if(filtro.equals(FILTRO_TODOS)){
-			this.filterStrategy = new FiltrarTodos();
-		}
-		else if(filtro.equals(FILTRO_ESTOQUE_MENOR_OU_IQUAL_A)){
-			this.filterStrategy = new FiltrarEstoque();
-		}
-		else if(filtro.equals(FILTRO_CATEGORIA_IGUAL_A)){
-			this.filterStrategy = new FiltrarCategoria();
-		}
-		else if(filtro.equals(FILTRO_PRECO_ENTRE)){
-			this.filterStrategy = new FiltrarPreco();
-		}
-		else if(filtro.equals(FILTRO_DESCRICAO_SUBSTRING)){
-			this.filterStrategy = new FiltrarDescricao();
-		}
-		else{
-			throw new RuntimeException("Filtro invalido!");
+		switch (filtro) {
+			case FILTRO_CATEGORIA_IGUAL_A:
+				this.filterStrategy = new FiltrarCategoria();
+				break;
+			
+			case FILTRO_DESCRICAO_SUBSTRING:
+				this.filterStrategy = new FiltrarDescricao();
+				break;
+			
+			case FILTRO_ESTOQUE_MENOR_OU_IQUAL_A:
+				this.filterStrategy = new FiltrarEstoque();
+				break;
+			
+			case FILTRO_PRECO_ENTRE:
+				this.filterStrategy = new FiltrarPreco();
+				break;
+			
+			case FILTRO_TODOS:
+				this.filterStrategy = new FiltrarTodos();
+				break;
+		
+			default:
+				throw new RuntimeException("Filtro invalido!");
 		}
 
 	}
@@ -218,7 +233,6 @@ public class GeradorDeRelatorios {
 			System.out.println("\tcriterio de ordenação: 'preco_c' ou 'descricao_c' ou 'estoque_c' ou 'preco_d' ou 'descricao_d' ou 'estoque_d'");
 			System.out.println("\tcriterio de filtragem: 'todos' ou 'estoque_menor_igual' ou 'categoria_igual' ou 'preco_entre' ou 'descricao_substring'"); 
 			System.out.println("\tparâmetro de filtragem: argumentos adicionais necessários para a filtragem"); 
-			System.out.println("\topções de formatação: 'negrito' e/ou 'italico'");
 			System.out.println();
 			System.exit(1);
 		}
