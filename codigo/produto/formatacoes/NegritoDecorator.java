@@ -3,16 +3,16 @@ package produto.formatacoes;
 import produto.Produto;
 
 
-public class FormatacaoNegrito extends ProdutoFormatacaoDecorator {
-    public FormatacaoNegrito(Produto f) {
-        super(f);
+public class NegritoDecorator extends ProdutoFormatacaoDecorator {
+    public NegritoDecorator(Produto p) {
+        super(p);
     }
 
     @Override
     public String formataParaImpressao() {
         String saida = "";
         saida += "<span style=\"font-style:bold\">";
-        saida += this.f.formataParaImpressao();
+        saida += this.p.formataParaImpressao();
         saida += "</span>";
         return saida;
     }

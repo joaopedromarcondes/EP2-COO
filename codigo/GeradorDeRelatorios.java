@@ -142,22 +142,9 @@ public class GeradorDeRelatorios {
 		for(int i = 0; i < produtos.size(); i++){
 
 			Produto p = produtos.get(i);
-			boolean selecionado = false;
 
-			if(filterStrategy.filter(p, this.argFiltro)){
-				selecionado = true;
-			}
-
-			if(selecionado){
+			if(this.filterStrategy.filter(p, this.argFiltro)){
 				out.print("<li>");
-
-				if((format_flags & FORMATO_ITALICO) > 0){
-					p = new FormatacaoItalico(p);
-				}
-
-				if((format_flags & FORMATO_NEGRITO) > 0){
-					p = new FormatacaoNegrito(p);
-				}
 
 				out.print(p.formataParaImpressao());
 
@@ -199,8 +186,15 @@ public class GeradorDeRelatorios {
 				preco = Double.parseDouble(entrada.next());
 				p = new ProdutoPadrao(id, descricao, categoria, quantidade_estoque, preco);
 				negrito = entrada.nextBoolean();
+				if (negrito) {
+					p = new NegritoDecorator(p);
+				}
 				italico = entrada.nextBoolean();
+				if (italico) {
+					p = new ItalicoDecorator(p);
+				}
 				cor = entrada.next();
+				p = new CorDecorator(p, cor);
 				produtos.add(p);
 			}
 		} catch (Exception e) {
