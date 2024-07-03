@@ -30,52 +30,39 @@ public class GeradorDeRelatorios {
 	public static final String FILTRO_PRECO_ENTRE = "preco_entre";
 	public static final String FILTRO_DESCRICAO_SUBSTRING = "descricao_substring";
 
-	// operador bit a bit "ou" pode ser usado para combinar mais de  
-	// um estilo de formatacao simultaneamente (veja como no main)
-	public static final int FORMATO_PADRAO  = 0b0000;
-	public static final int FORMATO_NEGRITO = 0b0001;
-	public static final int FORMATO_ITALICO = 0b0010;
-
 	private List<Produto> produtos;
-	private String algoritmo;
-	private String criterio;
-	private String filtro;
 	private String argFiltro;
-	private int format_flags;
 
 
 	private SortStrategy sortStrategy;
-	private CriterioOrdenacaoStrategy criterioOrdenacaoStrategy;
 	private FilterStrategy filterStrategy;
 
 
-	public GeradorDeRelatorios(List<Produto> produtos, String algoritmo, String criterio, String filtro, String argFiltro, int format_flags){
+	public GeradorDeRelatorios(List<Produto> produtos, String algoritmo, String criterio, String filtro, String argFiltro){
 
 		this.produtos = produtos;
 
-		this.algoritmo = algoritmo;
-		this.criterio = criterio;
-		this.format_flags = format_flags;
-		this.filtro = filtro;
 		this.argFiltro = argFiltro;
 
+		CriterioOrdenacaoStrategy criterioOrdenacaoStrategy = null;
+
 		if(criterio.equals(CRIT_DESC_CRESC)){
-			this.criterioOrdenacaoStrategy = new CriterioDescricaoCrescente();
+			criterioOrdenacaoStrategy = new CriterioDescricaoCrescente();
 		}
 		else if(criterio.equals(CRIT_PRECO_CRESC)){
-			this.criterioOrdenacaoStrategy = new CriterioPrecoCrescente();
+			criterioOrdenacaoStrategy = new CriterioPrecoCrescente();
 		}
 		else if(criterio.equals(CRIT_ESTOQUE_CRESC)){
-			this.criterioOrdenacaoStrategy = new CriterioEstoqueCrescente();
+			criterioOrdenacaoStrategy = new CriterioEstoqueCrescente();
 		}
 		else if(criterio.equals(CRIT_ESTOQUE_DECRESC)){
-			this.criterioOrdenacaoStrategy = new CriterioEstoqueDecrescente();
+			criterioOrdenacaoStrategy = new CriterioEstoqueDecrescente();
 		}
 		else if(criterio.equals(CRIT_PRECO_DECRESC)){
-			this.criterioOrdenacaoStrategy = new CriterioPrecoDecrescente();
+			criterioOrdenacaoStrategy = new CriterioPrecoDecrescente();
 		}
 		else if(criterio.equals(CRIT_DESC_DECRESC)){
-			this.criterioOrdenacaoStrategy = new CriterioDescricaoDecrescente();
+			criterioOrdenacaoStrategy = new CriterioDescricaoDecrescente();
 		}
 		else{
 
@@ -84,10 +71,10 @@ public class GeradorDeRelatorios {
 
 
 		if(algoritmo.equals(ALG_INSERTIONSORT)){
-			this.sortStrategy = new InsertionSort(this.produtos, this.criterioOrdenacaoStrategy);
+			this.sortStrategy = new InsertionSort(this.produtos, criterioOrdenacaoStrategy);
 		}
 		else if(algoritmo.equals(ALG_QUICKSORT)){
-			this.sortStrategy = new QuickSort(this.produtos, this.criterioOrdenacaoStrategy);
+			this.sortStrategy = new QuickSort(this.produtos, criterioOrdenacaoStrategy);
 		}
 		else {
 			throw new RuntimeException("Algoritmo invalido!");
@@ -139,10 +126,7 @@ public class GeradorDeRelatorios {
 
 		int count = 0;
 
-		for(int i = 0; i < produtos.size(); i++){
-
-			Produto p = produtos.get(i);
-
+		for(Produto p: produtos){
 			if(this.filterStrategy.filter(p, this.argFiltro)){
 				out.print("<li>");
 
@@ -161,9 +145,7 @@ public class GeradorDeRelatorios {
 		out.close();
 	}
 
-	public static List<Produto> carregaProdutos(){
-		List<Produto> produtos = new ArrayList<>();
-		Scanner entrada = null;
+	private static Produto geraProduto(String linha) {
 		Produto p;
 		int id;
 		String descricao;
@@ -174,34 +156,52 @@ public class GeradorDeRelatorios {
 		boolean italico;
 		String cor;
 
+		Scanner entrada = new Scanner(linha);
+		entrada.useDelimiter(", |\n");
+		
+		id = entrada.nextInt();
+		descricao = entrada.next();
+		categoria = entrada.next();
+		quantidade_estoque = entrada.nextInt();
+		preco = Double.parseDouble(entrada.next());
+		p = new ProdutoPadrao(id, descricao, categoria, quantidade_estoque, preco);
+		negrito = entrada.nextBoolean();
+		if (negrito) {
+			p = new NegritoDecorator(p);
+		}
+		italico = entrada.nextBoolean();
+		if (italico) {
+			p = new ItalicoDecorator(p);
+		}
+		cor = entrada.next();
+		p = new CorDecorator(p, cor);
+		return p;
+			
+	}
+
+	public static List<Produto> carregaProdutos(){
+		List<Produto> produtos = new ArrayList<>();
+		Produto p;
+		BufferedReader entrada = null;
+
 		try {
-			entrada = new Scanner(new BufferedReader(new FileReader("produtos.csv")));
-			entrada.nextLine();
-			entrada.useDelimiter(", |\n");
-			while (entrada.hasNext()) {
-				id = entrada.nextInt();
-				descricao = entrada.next();
-				categoria = entrada.next();
-				quantidade_estoque = entrada.nextInt();
-				preco = Double.parseDouble(entrada.next());
-				p = new ProdutoPadrao(id, descricao, categoria, quantidade_estoque, preco);
-				negrito = entrada.nextBoolean();
-				if (negrito) {
-					p = new NegritoDecorator(p);
-				}
-				italico = entrada.nextBoolean();
-				if (italico) {
-					p = new ItalicoDecorator(p);
-				}
-				cor = entrada.next();
-				p = new CorDecorator(p, cor);
+			entrada = new BufferedReader(new FileReader("produtos.csv"));
+			entrada.readLine();
+			String linha = null;
+			while ((linha = entrada.readLine()) != null) {
+				p = geraProduto(linha);
 				produtos.add(p);
 			}
 		} catch (Exception e) {
 			e.printStackTrace();
 		} finally {
 			if (entrada != null) {
-				entrada.close();
+				
+				try {
+					entrada.close();
+				} catch (IOException e) {
+					e.printStackTrace();
+				}
 			}
 			return produtos;
 		}
@@ -226,33 +226,19 @@ public class GeradorDeRelatorios {
 		String opcao_algoritmo = args[0];
 		String opcao_criterio_ord = args[1];
 		String opcao_criterio_filtro = args[2];
-		String[] opcoes_formatacao = new String[2];
 		String opcao_parametro_filtro = null;
 		if (opcao_criterio_filtro.equals(FILTRO_PRECO_ENTRE)) {
 			opcao_parametro_filtro = args[3] + " " + args[4];
-		
-			opcoes_formatacao[0] = args.length > 5 ? args[5] : null;
-			opcoes_formatacao[1] = args.length > 6 ? args[6] : null;	
 		} else {
 			opcao_parametro_filtro = args[3];
-			opcoes_formatacao[0] = args.length > 4 ? args[4] : null;
-			opcoes_formatacao[1] = args.length > 5 ? args[5] : null;
 		}
 		
-		int formato = FORMATO_PADRAO;
-		
-		for(int i = 0; i < opcoes_formatacao.length; i++) {
-
-			String op = opcoes_formatacao[i];
-			formato |= (op != null ? op.equals("negrito") ? FORMATO_NEGRITO : (op.equals("italico") ? FORMATO_ITALICO : 0) : 0); 
-		}
 		
 		GeradorDeRelatorios gdr = new GeradorDeRelatorios(	carregaProdutos(), 
 									opcao_algoritmo,
 									opcao_criterio_ord,
 									opcao_criterio_filtro,
-									opcao_parametro_filtro,
-									formato 
+									opcao_parametro_filtro
 								 );
 
 		try{
